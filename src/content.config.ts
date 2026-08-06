@@ -21,6 +21,7 @@ const site = defineCollection({
           authors: z.array(z.string()),
           venue: z.string(),
           year: z.number(),
+          note: z.string().optional(),
           links: z.array(link).default([]),
           description: z.string(),
         }),

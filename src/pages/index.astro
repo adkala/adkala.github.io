@@ -42,7 +42,7 @@ const { Content: Blurb } = await render(site);
             <a href={paper.url}>{paper.title}</a>
             <ul class="tree">
               <li class="branch">{paper.authors.join(', ')}</li>
-              <li class="branch">{paper.venue}, {paper.year}</li>
+              <li class="branch">{paper.venue}, {paper.year}{paper.note ? ` ${paper.note}` : ''}</li>
               {paper.links.length > 0 && (
                 <li class="branch">
                   {paper.links.map((l, i) => (
