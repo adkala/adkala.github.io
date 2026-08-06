@@ -1,0 +1,150 @@
+/* ---------------------------------------------------------------------------
+   One typeface, one size, one weight, one style. Hierarchy comes from
+   whitespace and the orthogonal tree connectors — never from type.
+--------------------------------------------------------------------------- */
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --fg: #111;
+  --bg: #fff;
+  --line: #c4c4c4;      /* connector + underline colour */
+  --size: 15px;
+  --lh: 1.7;
+  --indent: 1.35em;     /* width reserved for a connector */
+  --gap: 0.45em;        /* vertical space between sibling nodes */
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: var(--size);
+  font-weight: 400;
+  font-style: normal;
+  line-height: var(--lh);
+  color: var(--fg);
+  background: var(--bg);
+  max-width: 660px;
+  margin: 0 auto;
+  padding: 84px 24px 112px;
+}
+
+/* Force every element to the one and only type treatment. */
+h1,
+h2,
+h3,
+p,
+ul,
+li,
+a,
+strong,
+em,
+span,
+div {
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: 400;
+  font-style: normal;
+  line-height: inherit;
+}
+
+a {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: var(--line);
+  text-underline-offset: 2px;
+}
+
+a:hover {
+  text-decoration-color: var(--fg);
+}
+
+/* --- header ---------------------------------------------------------------- */
+
+.name {
+  margin-bottom: 1.5em;
+}
+
+.blurb p + p {
+  margin-top: 1em;
+}
+
+.links {
+  margin-top: 1.6em;
+}
+
+/* one link per line, click target kept tight to the text */
+.links a {
+  display: block;
+  width: fit-content;
+}
+
+/* small section divider between the header and the research section */
+.divider {
+  border: 0;
+  border-top: 1px solid var(--line);
+  width: 2.5em;
+  margin: 2.6em 0;
+}
+
+/* --- research -------------------------------------------------------------- */
+
+.research {
+  margin-top: 0;
+}
+
+.tree-label {
+  margin-bottom: 1.6em;
+}
+
+/* Each paper is its own tree: the title is the root, its details branch off. */
+.entry + .entry {
+  margin-top: 2em;
+}
+
+ul.tree {
+  list-style: none;
+}
+
+/* A node in the tree: reserve room on the left for its connector. */
+.branch {
+  position: relative;
+  padding-left: var(--indent);
+  padding-top: var(--gap);
+}
+
+/* Vertical spine — spans the whole node so it meets its neighbours with
+   no break (spacing lives in padding, never margin, to keep the line whole). */
+.branch::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  border-left: 1px solid var(--line);
+}
+
+/* Horizontal arm reaching in to the node's first line. */
+.branch::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: calc(var(--gap) + 0.5em * var(--lh));
+  width: calc(var(--indent) - 0.4em);
+  border-top: 1px solid var(--line);
+}
+
+/* Last child: spine stops at the arm, forming the └ elbow. */
+.branch:last-child::before {
+  bottom: auto;
+  height: calc(var(--gap) + 0.5em * var(--lh));
+}

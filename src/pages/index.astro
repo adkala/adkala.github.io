@@ -1,0 +1,63 @@
+---
+import '../styles/global.css';
+import { getCollection, render } from 'astro:content';
+
+const [site] = await getCollection('site');
+const { name, links, research } = site.data;
+const { Content: Blurb } = await render(site);
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content={name} />
+    <meta
+      name="description"
+      content="Addison Kalanther — researcher in reinforcement learning for multi-agent games with unknown adversaries at Berkeley AI Research."
+    />
+    <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+    <title>{name}</title>
+  </head>
+
+  <body>
+    <h1 class="name">{name}</h1>
+
+    <div class="blurb">
+      <Blurb />
+    </div>
+
+    <p class="links">
+      {links.map((link) => <a href={link.href}>{link.label}</a>)}
+    </p>
+
+    <hr class="divider" />
+
+    <section class="research">
+      <h2 class="tree-label">Research</h2>
+      {
+        research.map((paper) => (
+          <div class="entry">
+            <a href={paper.url}>{paper.title}</a>
+            <ul class="tree">
+              <li class="branch">{paper.authors.join(', ')}</li>
+              <li class="branch">{paper.venue}, {paper.year}</li>
+              {paper.links.length > 0 && (
+                <li class="branch">
+                  {paper.links.map((l, i) => (
+                    <Fragment>
+                      {i > 0 ? ' / ' : ''}
+                      <a href={l.href}>{l.label}</a>
+                    </Fragment>
+                  ))}
+                </li>
+              )}
+              <li class="branch">{paper.description}</li>
+            </ul>
+          </div>
+        ))
+      }
+    </section>
+  </body>
+</html>
