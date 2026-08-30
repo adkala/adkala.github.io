@@ -58,4 +58,4 @@ research:
 
 I'm a first year [EECS](https://www.eecs.berkeley.edu/) PhD Student at [UC Berkeley](https://www.berkeley.edu/). I work in [Berkeley Artificial Intelligence Research](https://bair.berkeley.edu/) (BAIR), advised by Professor [Shankar Sastry](https://www.eecs.berkeley.edu/Faculty/Homepages/sastry.html). I am interested in long-horizon manipulation tasks and, more broadly, general intelligence for robotics. My current research concerns robot learning and reinforcement learning, and I previously researched multi-agent reinforcement learning. Outside of research, I enjoy music and sports.
 
-I'm also a researcher at [Tensr](https://tensr.com) and an editor at [BAIR blog](https://bair.berkeley.edu/blog/).
+I'm also a researcher at [Tensr](https://tensr.com) and on the BAIR media team, serving as an editor for the [blog](https://bair.berkeley.edu/blog/) and lead for the website.
