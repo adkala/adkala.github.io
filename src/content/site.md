@@ -56,6 +56,4 @@ research:
       policies and deep RL to train an adaptive pursuer team.
 ---
 
-I'm an incoming [EECS](https://www.eecs.berkeley.edu/) PhD Student at [UC Berkeley](https://www.berkeley.edu/). I work in [Berkeley Artificial Intelligence Research](https://bair.berkeley.edu/) (BAIR) under Professor [Shankar Sastry](https://www2.eecs.berkeley.edu/Faculty/Homepages/sastry.html). I am interested in automatic skill acquisition and recursive self improvement for robotics, and my research concerns robot learning, reinforcement learning, multi-agent learning, and agentic AI. More broadly, I am interested in the makeup of intelligence. Outside of research, I enjoy sports and music.
-
-I'm also a researcher at a stealth startup and an editor at [BAIR blog](https://bair.berkeley.edu/blog/).
+I'm a first-year [EECS](https://www.eecs.berkeley.edu/) PhD student at [UC Berkeley](https://www.berkeley.edu/), advised by Professor [Shankar Sastry](https://www.eecs.berkeley.edu/Faculty/Homepages/sastry.html) in [Berkeley Artificial Intelligence Research](https://bair.berkeley.edu/) (BAIR). I study reinforcement learning, robot learning, and multi-agent learning, broadly aiming to build machines that reason, with a focus on robotics. I also work on autonomous manufacturing at [Tensr](https://tensr.com), edit the [BAIR blog](https://bair.berkeley.edu/blog/), and manage the [BAIR website](https://bair.berkeley.edu/).
