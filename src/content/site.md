@@ -19,6 +19,8 @@ research:
     year: 2026
     note: "[Accepted]"
     links:
+      - label: project page
+        href: "/neppo"
       - label: arXiv
         href: "https://arxiv.org/abs/2603.06977"
     description: >-

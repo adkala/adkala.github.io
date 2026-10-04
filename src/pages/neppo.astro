@@ -1,0 +1,224 @@
+---
+import 'katex/dist/katex.min.css';
+import '../styles/project.css';
+import katex from 'katex';
+
+const title =
+  'NePPO: Near-Potential Policy Optimization for General-Sum Multi-Agent Reinforcement Learning';
+const description =
+  'NePPO computes approximate Nash equilibria of general-sum multi-agent games by learning a player-independent potential function with zeroth-order gradient descent and solving the cooperative game it induces.';
+const arxiv = 'https://arxiv.org/abs/2603.06977';
+const code = 'https://github.com/adkala/neppo';
+const ogImage = new URL('/neppo/fig2.png', Astro.site);
+
+// Render $$...$$ (display) and $...$ (inline) TeX with KaTeX at build time, so
+// the page ships no math JavaScript. Prose is written with String.raw so
+// backslashes survive.
+const tex = (s: string) =>
+  s
+    .replace(/\$\$([\s\S]+?)\$\$/g, (_, t) =>
+      katex.renderToString(t, { displayMode: true, throwOnError: true }),
+    )
+    .replace(/\$([^$]+?)\$/g, (_, t) => katex.renderToString(t, { throwOnError: true }));
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="Addison Kalanther" />
+    <meta name="description" content={description} />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImage} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+    <title>{title}</title>
+  </head>
+
+  <body>
+    <header class="head">
+      <h1 class="title">{title}</h1>
+      <p class="authors">
+        <a href="/">Addison Kalanther</a><sup>1</sup>, Sanika Bharvirkar<sup>1</sup>, Shankar Sastry<sup>1</sup>,
+        Chinmay Maheshwari<sup>2</sup>
+      </p>
+      <p class="affil">
+        <sup>1</sup>UC Berkeley &nbsp;&nbsp; <sup>2</sup>Johns Hopkins University
+      </p>
+      <p class="venue">IEEE Conference on Decision and Control (CDC), 2026</p>
+      <p class="buttons">
+        <a href={arxiv}>arXiv</a>
+        <a href={code}>Code</a>
+        <a href="#citation">BibTeX</a>
+      </p>
+    </header>
+
+    <figure class="hero">
+      <img
+        src="/neppo/fig2.png"
+        width="2250"
+        height="750"
+        alt="Three log-scale plots of maximum player regret over training at alpha 0.4, 0.6 and 0.8. IPPO oscillates between high and low regret; NePPO drops quickly and stays flat at a low value."
+      />
+      <figcaption
+        set:html={tex(String.raw`Maximum player regret over training on the two-player matrix games of eq. (7) at $\alpha \in \{0.4, 0.6, 0.8\}$, where the unique Nash equilibrium is fully mixed. IPPO cycles; NePPO converges to a low-regret profile within 500 iterations (IPPO is shown for 5000).`)}
+      />
+    </figure>
+
+    <section>
+      <h2>Abstract</h2>
+      <p>
+        Multi-agent reinforcement learning (MARL) is increasingly used to design learning-enabled
+        agents that interact in shared environments. However, training MARL algorithms in
+        general-sum games remains challenging: learning dynamics can become unstable, and
+        convergence guarantees typically hold only in restricted settings such as two-player
+        zero-sum or fully cooperative games. Moreover, when agents have heterogeneous and
+        potentially conflicting preferences, it is unclear what system-level objective should
+        guide learning. In this paper, we propose a new MARL pipeline called Near-Potential Policy
+        Optimization (NePPO) for computing approximate Nash equilibria in mixed
+        cooperative–competitive environments. The core idea is to learn a player-independent
+        potential function such that the Nash equilibrium of a cooperative game with this
+        potential as the common utility approximates a Nash equilibrium of the original game. To
+        this end, we introduce a novel MARL objective such that minimizing this objective yields
+        the best possible potential function candidate and consequently an approximate Nash
+        equilibrium of the original game. We develop an algorithmic pipeline that minimizes this
+        objective using zeroth-order gradient descent and returns an approximate Nash equilibrium
+        policy. We empirically show the superior performance of this approach compared to popular
+        baselines such as IPPO and MAPPO.
+      </p>
+    </section>
+
+    <section>
+      <h2>Method</h2>
+      <p
+        set:html={tex(String.raw`NePPO computes approximate Nash equilibria of a general-sum Markov game by learning a single, player-independent potential function $\Phi$ and solving the <em>cooperative</em> game in which every player maximizes $\Phi$. If $\Phi$ reproduces the change in each player's own utility under a unilateral deviation from that cooperative equilibrium, then the cooperative solution is an approximate equilibrium of the original game.`)}
+      />
+
+      <h3>Objective</h3>
+      <p
+        set:html={tex(String.raw`Let $\pi^{\Phi}$ be a Nash equilibrium of the cooperative game with common utility $\Phi$, and let $\pi_i^{J}$ be player $i$'s best response to $\pi_{-i}^{\Phi}$ under its own utility $J_i$. For each player,
+$$F_i(\Phi) \;=\; \big[\,\Phi(\pi^{\Phi}) - \Phi(\pi_i^{J}, \pi_{-i}^{\Phi})\,\big] \;-\; \big[\,J_i(\pi^{\Phi}) - J_i(\pi_i^{J}, \pi_{-i}^{\Phi})\,\big]$$
+measures the mismatch between the change in potential and the change in the player's own value along its best-response deviation. Each $F_i$ is non-negative, and if $\max_i F_i(\Phi) \le \alpha$ then $\pi^{\Phi}$ is an $\alpha$-approximate Nash equilibrium of the original game (Theorem 3.1). NePPO therefore minimizes $\max_i F_i(\Phi)$ over $\Phi$. Unlike the defining condition of a Markov near-potential function, this only asks $\Phi$ to be accurate <em>around</em> $\pi^{\Phi}$ rather than uniformly over policy space — which is why NePPO can recover equilibria even in zero-sum games, where no global potential function exists.`)}
+      />
+
+      <h3>Algorithm</h3>
+      <p
+        set:html={tex(String.raw`$\Phi_w$ is restricted to a parameterized family and the max over players is smoothed with a log-sum-exp, $\tilde F_\beta(\Phi) = \tfrac{1}{\beta} \log \sum_i \exp\big(\beta F_i(\Phi)\big)$. Because $F_i$ depends on $w$ only through the solutions of two nested RL problems, its gradient is estimated with a two-point zeroth-order estimator. Each iteration:`)}
+      />
+      <ol class="algo">
+        <li
+          set:html={tex(String.raw`Sample a direction $u$ uniformly on the unit sphere and set $\hat w = w + \delta u$, $\check w = w - \delta u$.`)}
+        />
+        <li
+          set:html={tex(String.raw`<em>CoopGameSolver</em> (HAPPO): warm-starting from the current $\pi^{\Phi}$, solve the cooperative game under $\Phi_{\hat w}$ and $\Phi_{\check w}$ for $K_1$ updates.`)}
+        />
+        <li
+          set:html={tex(String.raw`<em>RLSolver</em> (PPO): for each player, compute a best response to the other players' cooperative policies for $K_2$ updates.`)}
+        />
+        <li
+          set:html={tex(String.raw`Estimate $\tilde F_\beta(\Phi_{\hat w})$ and $\tilde F_\beta(\Phi_{\check w})$ from Monte-Carlo rollouts and take the step
+$$w \;\leftarrow\; w - \eta\,\frac{\dim(w)}{2\delta}\,\big[\tilde F_\beta(\Phi_{\hat w}) - \tilde F_\beta(\Phi_{\check w})\big]\,u.$$`)}
+        />
+      </ol>
+      <p
+        set:html={tex(String.raw`The algorithm returns $\pi^{\Phi}$. Both solvers are modular: any cooperative MARL method can serve as the CoopGameSolver and any single-agent RL method as the RLSolver. The parameterization of $\Phi$ is a design handle — restricting it to a structured class biases which equilibrium is selected without modifying any player's reward.`)}
+      />
+    </section>
+
+    <section>
+      <h2>Results</h2>
+
+      <h3>Mechanism on a 2×2 game</h3>
+      <p
+        set:html={tex(String.raw`On the general-sum game of eq. (8), the candidate potential is the convex combination $\Phi_w = w J_1 + (1 - w) J_2$. The objective can be evaluated in closed form and is minimized (at zero) for every $w \in [0.6, 1]$, even though the game is not a potential game.`)}
+      />
+      <figure>
+        <div class="grid2">
+          <img src="/neppo/fig1a.png" width="1200" height="750" alt="Evolution of the potential weight w over environment steps, rising in a staircase from 0.5 to about 0.75." />
+          <img src="/neppo/fig1b.png" width="1200" height="750" alt="Evolution of F_i for both players, converging to zero." />
+          <img src="/neppo/fig1c.png" width="1200" height="750" alt="Change in value and change in potential under unilateral best responses, both converging to zero." />
+          <img src="/neppo/fig1d.png" width="1200" height="750" alt="Episode reward of each player under NePPO and MAPPO. NePPO's players converge to (1, 1); MAPPO's stay at (0.5, 1.75)." />
+        </div>
+        <figcaption
+          set:html={tex(String.raw`Toy example ($\alpha = 0$). (a) $w$ climbs to $\approx 0.75$, a minimizer of $\max_i F_i$. (b) $F_i \to 0$ for both players. (c) The change in value and the change in potential under unilateral best responses both vanish. (d) MAPPO, which maximizes $0.5\,J_1 + 0.5\,J_2$, converges to $(A_2, B_1)$, which is not an equilibrium; NePPO recovers the Nash equilibrium $(A_1, B_1)$ with utility $(1, 1)$.`)}
+        />
+      </figure>
+
+      <h3>Matrix games</h3>
+      <p
+        set:html={tex(String.raw`Eq. (7) defines a family of two-player, two-action games indexed by $\alpha \in [0, 1]$: $\alpha = 0$ is the general-sum game above, $\alpha = 1$ is zero-sum, and for $0.2 < \alpha < 1$ the unique equilibrium is fully mixed. Here the potential is the quadratic $\Phi_w(x, y) = -(x - p)^2 - (y - q)^2$ over the players' mixed strategies, with $w = (p, q)$. NePPO attains the lowest max regret at every $\alpha$ and recovers exact equilibria at $\alpha \in \{0, 0.2, 1\}$, including the zero-sum case. IPPO cycles at the mixed equilibria (top figure), and MAPPO converges to non-equilibrium profiles because it maximizes the summed reward.`)}
+      />
+      <figure>
+        <div class="tablewrap">
+          <table>
+            <thead>
+              <tr><th set:html={tex(String.raw`$\alpha$`)} /><th>NePPO</th><th>IPPO</th><th>MAPPO</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>0.0</td><td>0.000</td><td>0.000</td><td>0.500</td></tr>
+              <tr><td>0.2</td><td>0.000</td><td>0.000</td><td>0.800</td></tr>
+              <tr><td>0.4</td><td>0.036</td><td>DNC</td><td>1.100</td></tr>
+              <tr><td>0.6</td><td>0.052</td><td>DNC</td><td>1.400</td></tr>
+              <tr><td>0.8</td><td>0.034</td><td>DNC</td><td>1.700</td></tr>
+              <tr><td>1.0</td><td>0.000</td><td>0.011</td><td>N/A</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <figcaption
+          set:html={tex(String.raw`Max player regret of the returned policy on the matrix game family. DNC: did not converge. At $\alpha = 1$ the summed reward MAPPO optimizes is identically zero.`)}
+        />
+      </figure>
+
+      <h3>Simple World Comm</h3>
+      <p
+        set:html={tex(String.raw`A partially observable, general-sum Markov game from the Multi-Particle Environment suite with six agents: two heroes that collect food while avoiding capture, and four adversaries that pursue them, one of which sees the heroes and can broadcast to the rest. The potential is the discounted sum of a state-dependent softmax mixture of the agents' rewards, $\phi_w(s, a) = \sum_i \sigma_i(W s + b)\, r_i(s, a)$, so the learned potential can weight players differently in different states. Regret is measured per agent by training a PPO best response against the others' frozen policies.`)}
+      />
+      <figure>
+        <div class="tablewrap">
+          <table>
+            <thead>
+              <tr><th></th><th>NePPO</th><th>IPPO</th><th>MAPPO</th><th>MADDPG</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Max regret</td><td>11.14</td><td>23.90</td><td>51.78</td><td>DNC</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <figcaption>
+          Maximum regret over the six agents in Simple World Comm. MAPPO favours one group of
+          agents at the expense of the other; IPPO handles the competitive part but fails to
+          coordinate; MADDPG did not converge.
+        </figcaption>
+      </figure>
+      <figure>
+        <img
+          src="/neppo/fig3.png"
+          width="1500"
+          height="750"
+          alt="Regret of each of the six agents and the maximum over agents versus training timestep in millions. The maximum rises to about 20 at 20 million steps and then falls to about 11 at 35 million."
+        />
+        <figcaption>
+          Max regret across players over training on Simple World Comm. Regret rises while the
+          cooperative and best-response solvers warm up (one update of each per potential step),
+          then falls as the potential is learned.
+        </figcaption>
+      </figure>
+    </section>
+
+    <section id="citation">
+      <h2>Citation</h2>
+      <pre is:raw>@inproceedings{kalanther2026neppo,
+  author       = {Kalanther, Addison and Bharvirkar, Sanika and Sastry, Shankar and Maheshwari, Chinmay},
+  title        = {NePPO: Near-Potential Policy Optimization for General-Sum Multi-Agent Reinforcement Learning},
+  booktitle    = {Proceedings of the 2026 65th IEEE Conference on Decision and Control (CDC)},
+  year         = {2026},
+  month        = {Dec},
+  organization = {IEEE},
+  note         = {To appear}
+}</pre>
+    </section>
+  </body>
+</html>
