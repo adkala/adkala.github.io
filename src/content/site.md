@@ -12,6 +12,18 @@ links:
   - label: LinkedIn
     href: "https://www.linkedin.com/in/addikala"
 research:
+  - title: "Orchestrating Level-K Policies Against Unknown Opponents in Partially-Observable Dynamic Games"
+    url: "https://arxiv.org/abs/2610.04937"
+    authors: ["A. Kalanther", "S. Bharvirkar", "D. Bostwick", "C. Maheshwari", "S. Sastry"]
+    venue: "Under review"
+    links:
+      - label: arXiv
+        href: "https://arxiv.org/abs/2610.04937"
+    description: >-
+      We frame deploying a level-K policy hierarchy against an opponent of unknown level as
+      dynamic orchestration of a fixed, pretrained policy library in a partially observable
+      Markov game. In pursuit-evasion, an RL-trained orchestrator outperforms classifiers
+      that estimate the opponent's level and pick the matching response.
   - title: "NePPO: Near-Potential Policy Optimization for General-Sum Multi-Agent Reinforcement Learning"
     url: "https://arxiv.org/abs/2603.06977"
     authors: ["A. Kalanther", "S. Bharvirkar", "S. Sastry", "C. Maheshwari"]
