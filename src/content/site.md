@@ -20,10 +20,10 @@ research:
       - label: arXiv
         href: "https://arxiv.org/abs/2610.04937"
     description: >-
-      We frame deploying a level-K policy hierarchy against an opponent of unknown level as
-      dynamic orchestration of a fixed, pretrained policy library in a partially observable
-      Markov game. In pursuit-evasion, an RL-trained orchestrator outperforms classifiers
-      that estimate the opponent's level and pick the matching response.
+      We study how to deploy pretrained level-K policies against an opponent whose reasoning
+      level is unknown. In pursuit-evasion, an orchestrator trained with RL to choose among
+      them earns higher return than classifiers that estimate the opponent's level and play
+      the matching response.
   - title: "NePPO: Near-Potential Policy Optimization for General-Sum Multi-Agent Reinforcement Learning"
     url: "https://arxiv.org/abs/2603.06977"
     authors: ["A. Kalanther", "S. Bharvirkar", "S. Sastry", "C. Maheshwari"]
@@ -37,8 +37,9 @@ research:
         href: "https://arxiv.org/abs/2603.06977"
     description: >-
       We propose NePPO, a multi-agent RL algorithm for approximating Nash equilibria in
-      general-sum games. It learns a player-independent potential function by minimizing a
-      novel objective with zeroth-order gradient descent.
+      general-sum games. It learns a single potential function shared by all players, so
+      that an equilibrium of the cooperative game it defines approximates one of the
+      original game.
   - title: "Coordinated Autonomous Drones for Human-Centered Fire Evacuation in Partially Observable Urban Environments"
     url: "https://arxiv.org/abs/2510.23899"
     authors: ["M. Mendoza", "A. Kalanther", "D. Bostwick", "E. Stephan", "C. Maheshwari", "S. Sastry"]
@@ -63,9 +64,9 @@ research:
       - label: arXiv
         href: "https://arxiv.org/abs/2511.05812"
     description: >-
-      We develop a sample-efficient strategy for unknown adversaries in a partially-observable
-      pursuit-evasion game, using a bounded-rationality model to collect diverse evader
-      policies and deep RL to train an adaptive pursuer team.
+      We train a team of two pursuer UAVs to intercept an evader of unknown behavior in an
+      occluded urban environment. Deep RL builds a level-K hierarchy of policies offline;
+      online, a classifier estimates the evader's level and plays the matching response.
 ---
 
 I'm a first-year [EECS](https://www.eecs.berkeley.edu/) PhD student at [UC Berkeley](https://www.berkeley.edu/), advised by Professor [Shankar Sastry](https://www.eecs.berkeley.edu/Faculty/Homepages/sastry.html) in [Berkeley Artificial Intelligence Research](https://bair.berkeley.edu/) (BAIR). I study reinforcement learning, robot learning, and multi-agent learning, broadly aiming to build machines that reason, with a focus on robotics. I also work on autonomous manufacturing at [Tensr](https://tensr.com), edit the [BAIR blog](https://bair.berkeley.edu/blog/), and manage the [BAIR website](https://bair.berkeley.edu/).
