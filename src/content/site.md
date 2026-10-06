@@ -16,6 +16,7 @@ research:
     url: "https://arxiv.org/abs/2610.04937"
     authors: ["A. Kalanther", "S. Bharvirkar", "D. Bostwick", "C. Maheshwari", "S. Sastry"]
     venue: "Under review"
+    year: 2026
     links:
       - label: arXiv
         href: "https://arxiv.org/abs/2610.04937"
