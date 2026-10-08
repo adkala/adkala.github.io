@@ -12,9 +12,9 @@
 }
 
 :root {
-  --fg: #111;
-  --bg: #fff;
-  --line: #c4c4c4;      /* connector + underline colour */
+  --fg: #e6e6e6;
+  --bg: #000;
+  --line: #555;         /* connector + underline colour */
   --size: 15px;
   --lh: 1.7;
   --indent: 1.35em;     /* width reserved for a connector */
@@ -33,6 +33,9 @@ body {
   line-height: var(--lh);
   color: var(--fg);
   background: var(--bg);
+  -webkit-font-smoothing: antialiased;   /* light-on-dark text renders heavy without it */
+  -moz-osx-font-smoothing: grayscale;
+  letter-spacing: 0.01em;
   max-width: 660px;
   margin: 0 auto;
   padding: 84px 24px 112px;
@@ -66,6 +69,12 @@ a {
 
 a:hover {
   text-decoration-color: var(--fg);
+}
+
+/* own name in an author list: full-strength underline, unlike a link's */
+.me {
+  text-decoration: underline;
+  text-underline-offset: 2px;
 }
 
 /* --- header ---------------------------------------------------------------- */

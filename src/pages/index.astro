@@ -5,6 +5,10 @@ import { getCollection, render } from 'astro:content';
 const [site] = await getCollection('site');
 const { name, links, research } = site.data;
 const { Content: Blurb } = await render(site);
+
+// Author lists use the abbreviated form, e.g. "A. Kalanther".
+const [first, ...rest] = name.split(' ');
+const me = `${first[0]}. ${rest.join(' ')}`;
 ---
 
 <!doctype html>
@@ -41,7 +45,14 @@ const { Content: Blurb } = await render(site);
           <div class="entry">
             <a href={paper.url}>{paper.title}</a>
             <ul class="tree">
-              <li class="branch">{paper.authors.join(', ')}</li>
+              <li class="branch">
+                {paper.authors.map((author, i) => (
+                  <Fragment>
+                    {i > 0 ? ', ' : ''}
+                    {author === me ? <span class="me">{author}</span> : author}
+                  </Fragment>
+                ))}
+              </li>
               <li class="branch">{paper.venue}{paper.year ? `, ${paper.year}` : ''}{paper.note ? ` ${paper.note}` : ''}</li>
               {paper.links.length > 0 && (
                 <li class="branch">
