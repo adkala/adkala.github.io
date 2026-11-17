@@ -1,0 +1,27 @@
+---
+// Google Analytics 4 (gtag.js). Renders nothing unless a measurement ID is set
+// in src/config.ts and this is a production build.
+import { GA_MEASUREMENT_ID } from '../config';
+
+const id = GA_MEASUREMENT_ID.trim();
+if (id && !/^G-[A-Z0-9]+$/.test(id)) {
+  throw new Error(`GA_MEASUREMENT_ID should look like "G-XXXXXXXXXX", got "${id}"`);
+}
+const enabled = id !== '' && import.meta.env.PROD;
+---
+
+{
+  enabled && (
+    <>
+      <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${id}`} />
+      <script is:inline define:vars={{ id }}>
+        window.dataLayer = window.dataLayer || [];
+        window.gtag = function () {
+          window.dataLayer.push(arguments);
+        };
+        window.gtag('js', new Date());
+        window.gtag('config', id);
+      </script>
+    </>
+  )
+}

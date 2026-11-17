@@ -1,0 +1,65 @@
+---
+import '../styles/global.css';
+import Analytics from '../components/Analytics.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  author: string;
+  /** Site-relative path to a preview image for link cards. */
+  image?: string;
+  imageAlt?: string;
+  /** Schema.org JSON-LD object for the page. */
+  jsonLd?: Record<string, unknown>;
+}
+
+const { title, description, author, image, imageAlt, jsonLd } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const imageUrl = image ? new URL(image, Astro.site) : undefined;
+const [firstName, ...rest] = author.split(' ');
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="author" content={author} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+    <meta name="theme-color" content="#EFEFEF" />
+
+    {/* Open Graph / link previews */}
+    <meta property="og:type" content="profile" />
+    <meta property="og:site_name" content={author} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content="en_US" />
+    <meta property="profile:first_name" content={firstName} />
+    <meta property="profile:last_name" content={rest.join(' ')} />
+    {imageUrl && <meta property="og:image" content={imageUrl} />}
+    {imageUrl && imageAlt && <meta property="og:image:alt" content={imageAlt} />}
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    {imageUrl && <meta name="twitter:image" content={imageUrl} />}
+
+    {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Geist+Mono:wght@400;500&display=swap"
+    />
+
+    <Analytics />
+  </head>
+
+  <body>
+    <slot />
+  </body>
+</html>
