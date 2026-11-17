@@ -1,24 +1,26 @@
 /* ---------------------------------------------------------------------------
-   One typeface, one size, one weight, one style. Hierarchy comes from
-   whitespace and the orthogonal tree connectors — never from type.
+   Monochrome: grey ground, near-black ink, one blue and one orange used only
+   inside figures. Geist Mono carries names, labels and links; EB Garamond
+   carries prose.
 --------------------------------------------------------------------------- */
+
+:root {
+  --bg: #efefef;
+  --fg: #222222;
+  --muted: #6a6a6a;
+  --rule: #d2d2d2;
+  --underline: #9a9a9a;
+
+  --serif: 'EB Garamond', Georgia, 'Times New Roman', serif;
+  --mono: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  color-scheme: light;
+}
 
 *,
 *::before,
 *::after {
-  margin: 0;
-  padding: 0;
   box-sizing: border-box;
-}
-
-:root {
-  --fg: #e6e6e6;
-  --bg: #000;
-  --line: #555;         /* connector + underline colour */
-  --size: 15px;
-  --lh: 1.7;
-  --indent: 1.35em;     /* width reserved for a connector */
-  --gap: 0.45em;        /* vertical space between sibling nodes */
 }
 
 html {
@@ -26,134 +28,430 @@ html {
 }
 
 body {
-  font-family: Helvetica, Arial, sans-serif;
-  font-size: var(--size);
-  font-weight: 400;
-  font-style: normal;
-  line-height: var(--lh);
-  color: var(--fg);
+  margin: 0;
   background: var(--bg);
-  -webkit-font-smoothing: antialiased;   /* light-on-dark text renders heavy without it */
+  color: var(--fg);
+  font-family: var(--serif);
+  font-size: 18px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  letter-spacing: 0.01em;
-  max-width: 660px;
-  margin: 0 auto;
-  padding: 84px 24px 112px;
 }
 
-/* Force every element to the one and only type treatment. */
 h1,
 h2,
-h3,
 p,
-ul,
-li,
-a,
-strong,
-em,
-span,
-div {
-  font-family: inherit;
-  font-size: inherit;
-  font-weight: 400;
-  font-style: normal;
-  line-height: inherit;
+ul {
+  margin: 0;
+}
+
+ul {
+  padding: 0;
+  list-style: none;
 }
 
 a {
   color: inherit;
-  text-decoration: underline;
-  text-decoration-color: var(--line);
-  text-underline-offset: 2px;
+  text-decoration: none;
 }
 
-a:hover {
-  text-decoration-color: var(--fg);
+/* hover only where there is a real pointer, so a tapped link on a touch
+   screen doesn't stay faded when you come back to the page */
+@media (hover: hover) {
+  a:hover {
+    opacity: 0.7;
+  }
+
+  a:hover .t {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 4px;
+  }
 }
 
-/* own name in an author list: full-strength underline, unlike a link's */
-.me {
-  text-decoration: underline;
-  text-underline-offset: 2px;
+a:focus-visible {
+  outline: 1px solid var(--fg);
+  outline-offset: 3px;
 }
 
-/* --- header ---------------------------------------------------------------- */
+abbr[title] {
+  text-decoration: none;
+}
+
+/* --- layout ---------------------------------------------------------------- */
+
+.page {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 80px 24px 96px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 64px;
+}
+
+.profile {
+  flex: 1 1 300px;
+  max-width: 320px;
+}
+
+.content {
+  flex: 999 1 520px;
+  min-width: 0;
+}
+
+/* --- profile --------------------------------------------------------------- */
+
+.id {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 24px;
+}
+
+.portrait {
+  display: block;
+  flex: none;
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+}
 
 .name {
-  margin-bottom: 1.5em;
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: 24px;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
 }
 
-.blurb p + p {
-  margin-top: 1em;
+.bio {
+  margin-top: 20px;
 }
 
-.links {
-  margin-top: 1.6em;
+.bio p {
+  font-size: 21px;
+  line-height: 1.5;
+  text-wrap: pretty;
 }
 
-/* one link per line, click target kept tight to the text */
-.links a {
+.bio p + p {
+  margin-top: 16px;
+  font-size: 18px;
+  color: var(--muted);
+}
+
+.bio a {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+  text-decoration-color: var(--underline);
+}
+
+.profiles {
+  margin-top: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-family: var(--mono);
+  font-size: 13px;
+}
+
+/* --- sections -------------------------------------------------------------- */
+
+.label {
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 1.5;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+section + section {
+  margin-top: 56px;
+}
+
+.rows {
+  margin-top: 16px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.row {
+  border-top: 1px solid var(--rule);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+  padding: 18px 0;
+}
+
+/* publications */
+
+.pub {
+  align-items: flex-start;
+}
+
+.thumb {
+  flex: none;
+  width: 160px;
+  height: 90px;
+}
+
+.thumb svg {
   display: block;
-  width: fit-content;
+  width: 100%;
+  height: 100%;
 }
 
-/* small section divider between the header and the research section */
-.divider {
-  border: 0;
-  border-top: 1px solid var(--line);
-  width: 2.5em;
-  margin: 2.6em 0;
+.pub .body {
+  flex: 1 1 300px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
-/* --- research -------------------------------------------------------------- */
-
-.research {
-  margin-top: 0;
+.title {
+  font-size: 21px;
+  line-height: 1.3;
 }
 
-.tree-label {
-  margin-bottom: 1.6em;
+.desc {
+  font-size: 17px;
+  line-height: 1.45;
+  color: var(--muted);
 }
 
-/* Each paper is its own tree: the title is the root, its details branch off. */
-.entry + .entry {
-  margin-top: 2em;
+.authors {
+  font-size: 16px;
+  line-height: 1.45;
+  color: var(--muted);
 }
 
-ul.tree {
-  list-style: none;
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 20px;
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 20px;
 }
 
-/* A node in the tree: reserve room on the left for its connector. */
-.branch {
-  position: relative;
-  padding-left: var(--indent);
-  padding-top: var(--gap);
+.meta {
+  font-family: var(--mono);
+  color: var(--muted);
 }
 
-/* Vertical spine — spans the whole node so it meets its neighbours with
-   no break (spacing lives in padding, never margin, to keep the line whole). */
-.branch::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  border-left: 1px solid var(--line);
+.meta-top {
+  display: none;
 }
 
-/* Horizontal arm reaching in to the node's first line. */
-.branch::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: calc(var(--gap) + 0.5em * var(--lh));
-  width: calc(var(--indent) - 0.4em);
-  border-top: 1px solid var(--line);
+/* experience */
+
+.job {
+  align-items: baseline;
+  gap: 6px 24px;
 }
 
-/* Last child: spine stops at the arm, forming the └ elbow. */
-.branch:last-child::before {
-  bottom: auto;
-  height: calc(var(--gap) + 0.5em * var(--lh));
+.dates {
+  flex: none;
+  width: 160px;
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.what {
+  flex: 1 1 300px;
+  min-width: 0;
+  font-size: 21px;
+  line-height: 1.3;
+}
+
+.role {
+  color: var(--muted);
+}
+
+.role::before {
+  content: ' — ';
+}
+
+.updated {
+  margin-top: 40px;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* --- single column (profile stacks above the lists) ------------------------ */
+
+@media (max-width: 931px) {
+  .profile {
+    max-width: 40rem;
+  }
+}
+
+/* --- touch screens wider than a phone (tablets, phones in landscape) -------
+   Same layout as desktop, but links get 44px-tall tap targets. */
+
+@media (pointer: coarse) and (min-width: 600px) {
+  .profiles {
+    gap: 0;
+  }
+
+  .profiles a {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: fit-content;
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  .actions {
+    align-items: center;
+    gap: 0 24px;
+  }
+
+  .actions a {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+  }
+}
+
+/* --- phone ----------------------------------------------------------------- */
+
+@media (max-width: 599px) {
+  .page {
+    padding: 48px 24px 64px;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    gap: 48px;
+  }
+
+  .profile,
+  .content {
+    flex: none;
+    max-width: none;
+  }
+
+  .id {
+    flex-direction: row;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .portrait {
+    width: 72px;
+    height: 72px;
+  }
+
+  .bio p {
+    font-size: 19px;
+  }
+
+  .bio p + p {
+    margin-top: 12px;
+    font-size: 17px;
+  }
+
+  /* two-column grid of full-height tap targets */
+  .profiles {
+    margin-top: 20px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0 16px;
+    border-top: 1px solid var(--rule);
+  }
+
+  .profiles a {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  section + section {
+    margin-top: 48px;
+  }
+
+  .rows {
+    margin-top: 12px;
+  }
+
+  .row {
+    flex-direction: column;
+    flex-wrap: nowrap;
+  }
+
+  .pub {
+    gap: 6px;
+    padding: 16px 0 6px;
+  }
+
+  .pub .body {
+    flex: none;
+    gap: 6px;
+  }
+
+  .meta-top {
+    display: block;
+    margin-top: 4px;
+    font-size: 12px;
+    line-height: 18px;
+  }
+
+  .meta-inline {
+    display: none;
+  }
+
+  .desc {
+    font-size: 16px;
+  }
+
+  .actions {
+    gap: 0 24px;
+    font-size: 13px;
+  }
+
+  .actions a {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+  }
+
+  .job {
+    gap: 4px;
+    padding: 16px 0;
+  }
+
+  .dates {
+    width: auto;
+    font-size: 12px;
+    line-height: 18px;
+  }
+
+  .what {
+    flex: none;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .role {
+    font-size: 16px;
+    line-height: 1.45;
+  }
+
+  .role::before {
+    content: none;
+  }
+
+  .updated {
+    margin-top: 32px;
+  }
 }

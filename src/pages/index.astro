@@ -1,74 +1,153 @@
 ---
-import '../styles/global.css';
+import Base from '../layouts/Base.astro';
 import { getCollection, render } from 'astro:content';
+import { lastUpdated } from '../lib/lastUpdated';
 
 const [site] = await getCollection('site');
-const { name, links, research } = site.data;
-const { Content: Blurb } = await render(site);
+const { name, seo, portrait, links, research, experience } = site.data;
+const { Content: Bio } = await render(site);
 
 // Author lists use the abbreviated form, e.g. "A. Kalanther".
 const [first, ...rest] = name.split(' ');
 const me = `${first[0]}. ${rest.join(' ')}`;
+
+// Paper thumbnails: inline SVG schematics in src/thumbs/<thumb>.svg.
+const thumbs = import.meta.glob<string>('../thumbs/*.svg', {
+  query: '?raw',
+  import: 'default',
+  eager: true,
+});
+const thumbFor = (slug?: string) => {
+  if (!slug) return undefined;
+  const svg = thumbs[`../thumbs/${slug}.svg`];
+  if (!svg) throw new Error(`No thumbnail at src/thumbs/${slug}.svg`);
+  return svg;
+};
+
+const siteUrl = new URL('/', Astro.site).href;
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ProfilePage',
+  url: siteUrl,
+  mainEntity: {
+    '@type': 'Person',
+    name,
+    url: siteUrl,
+    description: seo.description,
+    jobTitle: seo.jobTitle,
+    image: portrait ? new URL(portrait, Astro.site).href : undefined,
+    email: links.find((l) => l.href.startsWith('mailto:'))?.href,
+    knowsAbout: seo.topics,
+    affiliation: seo.affiliations.map((a) => ({ '@type': 'Organization', name: a.name, url: a.href })),
+    worksFor: { '@type': 'Organization', name: 'Tensr', url: 'https://tensr.com' },
+    sameAs: links.filter((l) => l.href.startsWith('http')).map((l) => l.href),
+  },
+};
 ---
 
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="author" content={name} />
-    <meta
-      name="description"
-      content="Addison Kalanther — researcher in reinforcement learning for multi-agent games with unknown adversaries at Berkeley AI Research."
-    />
-    <link rel="icon" href="/favicon.ico" type="image/x-icon" />
-    <title>{name}</title>
-  </head>
+<Base
+  title={seo.title}
+  description={seo.description}
+  author={name}
+  image={portrait}
+  imageAlt={`Portrait of ${name}`}
+  jsonLd={jsonLd}
+>
+  <div class="page">
+    <header class="profile">
+      <div class="id">
+        {portrait && <img class="portrait" src={portrait} alt={`Portrait of ${name}`} width="120" height="120" />}
+        <h1 class="name">{name}</h1>
+      </div>
 
-  <body>
-    <h1 class="name">{name}</h1>
+      <div class="bio">
+        <Bio />
+      </div>
 
-    <div class="blurb">
-      <Blurb />
-    </div>
-
-    <p class="links">
-      {links.map((link) => <a href={link.href}>{link.label}</a>)}
-    </p>
-
-    <hr class="divider" />
-
-    <section class="research">
-      <h2 class="tree-label">Research</h2>
-      {
-        research.map((paper) => (
-          <div class="entry">
-            <a href={paper.url}>{paper.title}</a>
-            <ul class="tree">
-              <li class="branch">
-                {paper.authors.map((author, i) => (
-                  <Fragment>
-                    {i > 0 ? ', ' : ''}
-                    {author === me ? <span class="me">{author}</span> : author}
-                  </Fragment>
-                ))}
+      <nav aria-label="Profiles">
+        <ul class="profiles">
+          {
+            links.map((link) => (
+              <li>
+                <a href={link.href}>
+                  <span aria-hidden="true">→</span> <span class="t">{link.label}</span>
+                </a>
               </li>
-              <li class="branch">{paper.venue}{paper.year ? `, ${paper.year}` : ''}{paper.note ? ` ${paper.note}` : ''}</li>
-              {paper.links.length > 0 && (
-                <li class="branch">
-                  {paper.links.map((l, i) => (
-                    <Fragment>
-                      {i > 0 ? ' / ' : ''}
-                      <a href={l.href}>{l.label}</a>
-                    </Fragment>
-                  ))}
+            ))
+          }
+        </ul>
+      </nav>
+    </header>
+
+    <main class="content">
+      <section aria-labelledby="publications">
+        <h2 id="publications" class="label">Publications</h2>
+        <ul class="rows">
+          {
+            research.map((paper) => {
+              const svg = thumbFor(paper.thumb);
+              const venue = paper.venueFull ? (
+                <abbr title={paper.venueFull}>{paper.venue}</abbr>
+              ) : (
+                paper.venue
+              );
+              return (
+                <li class="row pub">
+                  {svg && <div class="thumb" set:html={svg} />}
+                  <div class="body">
+                    <span class="meta meta-top">
+                      {paper.year} · {venue}
+                    </span>
+                    <a class="title" href={paper.url}>
+                      <span class="t">{paper.title}</span>
+                    </a>
+                    <span class="desc">{paper.description}</span>
+                    <span class="authors">
+                      {paper.authors.map((author, i) => (
+                        <Fragment>
+                          {i > 0 ? ', ' : ''}
+                          {author === me ? <em>{author}</em> : author}
+                        </Fragment>
+                      ))}
+                    </span>
+                    <div class="actions">
+                      <span class="meta meta-inline">
+                        {venue} {paper.year}
+                      </span>
+                      {paper.links.map((l) => (
+                        <a href={l.href}>
+                          <span aria-hidden="true">→</span> <span class="t">{l.label}</span>
+                        </a>
+                      ))}
+                    </div>
+                  </div>
                 </li>
-              )}
-              <li class="branch">{paper.description}</li>
+              );
+            })
+          }
+        </ul>
+      </section>
+
+      {
+        experience.length > 0 && (
+          <section aria-labelledby="experience">
+            <h2 id="experience" class="label">Experience</h2>
+            <ul class="rows">
+              {experience.map((job) => (
+                <li class="row job">
+                  {job.dates && <span class="dates">{job.dates}</span>}
+                  <span class="what">
+                    <span class="org">{job.org}</span>
+                    <span class="role">{job.role}</span>
+                  </span>
+                </li>
+              ))}
             </ul>
-          </div>
-        ))
+          </section>
+        )
       }
-    </section>
-  </body>
-</html>
+
+      <p class="updated">Last updated {lastUpdated()}</p>
+    </main>
+  </div>
+</Base>
